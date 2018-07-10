@@ -4,6 +4,7 @@ Uses raw python.
 
 The same functionality is available in numpy.linalg.det
 """
+from itertools import repeat
 from typing import List
 
 
