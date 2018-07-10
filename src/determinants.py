@@ -29,25 +29,7 @@ def find_determinant(matrix: List[List[int]], expansion_row: int=None) -> int:
     if rows == 2 and columns == 2:
         return base_determinant(matrix)
 
-    column = 0
-    minors = []
-    for _ in range(rows):
-        new_matrix = []
-        for i, row in enumerate(matrix):
-            if i == expansion_row:
-                continue
-            new_matrix_row = []
-            for idx, num in enumerate(row):
-                if idx == column:
-                    continue
-                new_matrix_row.append(num)
-            new_matrix.append(new_matrix_row)
-        column += 1
-        minor = find_determinant(new_matrix)
-        minors.append(minor)
-    signs = ((-1)**(row + col) for row, col in zip(repeat(expansion_row),
-                                                   range(columns)))
-    cofactors = [sign * minor for sign, minor in zip(signs, minors)]
+    cofactors = find_row_cofactors(matrix, expansion_row)
     return sum(cofactor * expansion for cofactor, expansion in zip(cofactors,
                                                                    matrix[expansion_row]))
 
@@ -58,4 +40,29 @@ def base_determinant(matrix: List[List[int]]) -> int:
     """
     if (len(matrix[0]), len(matrix)) != (2, 2):
         raise ValueError(f"Matrix mismatch: Not 2 x 2 matrix.")
+
     return (matrix[0][0] * matrix[1][1]) - (matrix[0][1] * matrix[1][0])
+
+
+def find_row_cofactors(matrix: List[List[int]], expansion_row: int) -> List[int]:
+    """
+    Find the cofactors of the given expansion row of a matrix.
+    """
+    rows, columns = len(matrix), len(matrix[0])
+    minors = []
+    for skip in range(rows):
+        new_matrix = []
+        for i, row in enumerate(matrix):
+            if i != expansion_row:
+                new_matrix_row = []
+                for idx, num in enumerate(row):
+                    if idx != skip:
+                        new_matrix_row.append(num)
+                new_matrix.append(new_matrix_row)
+        minor = find_determinant(new_matrix)
+        minors.append(minor)
+    signs = ((-1)**(row + col) for row, col in zip(repeat(expansion_row),
+                                                   range(columns)))
+    cofactors = [sign * minor for sign, minor in zip(signs, minors)]
+
+    return cofactors
