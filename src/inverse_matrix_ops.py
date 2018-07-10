@@ -2,7 +2,6 @@
 Contains functions that conduct operations centered around finding
 the inverse of a matrix.
 """
-from itertools import repeat
 from typing import List
 
 from determinants import (base_determinant,
